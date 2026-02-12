@@ -11,7 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { postLocation } from '../api/locations';
 import { fetchCats } from '../api/cats';
-import { useUserId } from '../hooks/useUserId';
+import { useAuth } from '../contexts/AuthContext';
 import { requestPermissionAndGetLocation } from '../services/locationService';
 import { Loading } from '../components/Loading';
 import { ErrorMessage } from '../components/ErrorMessage';
@@ -23,7 +23,7 @@ type Nav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 export function CatHomeScreen() {
   const navigation = useNavigation<Nav>();
   const queryClient = useQueryClient();
-  const userId = useUserId();
+  const { userId, clearUserId } = useAuth();
   const [coords, setCoords] = useState<{
     latitude: number;
     longitude: number;
@@ -67,7 +67,12 @@ export function CatHomeScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Cat Spotter</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>Cat Spotter</Text>
+        <TouchableOpacity onPress={() => clearUserId()}>
+          <Text style={styles.logoutText}>Log out</Text>
+        </TouchableOpacity>
+      </View>
 
       {locationError && <ErrorMessage message={locationError} />}
       {coords && (
@@ -123,7 +128,9 @@ export function CatHomeScreen() {
 
 const styles = StyleSheet.create({
   container: { padding: 24, paddingBottom: 48 },
-  title: { fontSize: 24, fontWeight: '600', marginBottom: 16 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
+  title: { fontSize: 24, fontWeight: '600' },
+  logoutText: { fontSize: 14, color: '#666' },
   section: { marginBottom: 16 },
   label: { fontSize: 12, color: '#666', marginBottom: 4 },
   coords: { fontSize: 14 },
