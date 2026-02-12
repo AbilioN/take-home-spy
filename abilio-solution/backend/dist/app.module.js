@@ -13,6 +13,8 @@ const typeorm_1 = require("@nestjs/typeorm");
 const users_module_1 = require("./users/users.module");
 const locations_module_1 = require("./locations/locations.module");
 const auth_module_1 = require("./auth/auth.module");
+const admin_module_1 = require("./admin/admin.module");
+const isTest = process.env.NODE_ENV === 'test';
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -22,18 +24,19 @@ exports.AppModule = AppModule = __decorate([
             config_1.ConfigModule.forRoot({ isGlobal: true }),
             typeorm_1.TypeOrmModule.forRoot({
                 type: 'postgres',
-                host: process.env.DB_HOST ?? 'localhost',
-                port: parseInt(process.env.DB_PORT ?? '5432', 10),
-                username: process.env.DB_USER ?? 'postgres',
-                password: process.env.DB_PASS ?? 'postgres',
-                database: process.env.DB_NAME ?? 'postgres',
+                host: isTest ? (process.env.DB_TEST_HOST ?? 'localhost') : (process.env.DB_HOST ?? 'localhost'),
+                port: parseInt(isTest ? (process.env.DB_TEST_PORT ?? '5432') : (process.env.DB_PORT ?? '5432'), 10),
+                username: isTest ? (process.env.DB_TEST_USER ?? 'postgres') : (process.env.DB_USER ?? 'postgres'),
+                password: isTest ? (process.env.DB_TEST_PASS ?? 'postgres') : (process.env.DB_PASS ?? 'postgres'),
+                database: isTest ? (process.env.DB_TEST_NAME ?? 'postgres_test') : (process.env.DB_NAME ?? 'postgres'),
                 autoLoadEntities: true,
-                synchronize: true,
+                synchronize: isTest,
                 extra: { connectionTimeoutMillis: 10000 },
             }),
             users_module_1.UsersModule,
             locations_module_1.LocationsModule,
             auth_module_1.AuthModule,
+            admin_module_1.AdminModule,
         ],
     })
 ], AppModule);

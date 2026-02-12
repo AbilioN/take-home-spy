@@ -4,24 +4,31 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { LocationsModule } from './locations/locations.module';
 import { AuthModule } from './auth/auth.module';
+import { AdminModule } from './admin/admin.module';
+
+const isTest = process.env.NODE_ENV === 'test';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST ?? 'localhost',
-      port: parseInt(process.env.DB_PORT ?? '5432', 10),
-      username: process.env.DB_USER ?? 'postgres',
-      password: process.env.DB_PASS ?? 'postgres',
-      database: process.env.DB_NAME ?? 'postgres',
+      host: isTest ? (process.env.DB_TEST_HOST ?? 'localhost') : (process.env.DB_HOST ?? 'localhost'),
+      port: parseInt(
+        isTest ? (process.env.DB_TEST_PORT ?? '5432') : (process.env.DB_PORT ?? '5432'),
+        10,
+      ),
+      username: isTest ? (process.env.DB_TEST_USER ?? 'postgres') : (process.env.DB_USER ?? 'postgres'),
+      password: isTest ? (process.env.DB_TEST_PASS ?? 'postgres') : (process.env.DB_PASS ?? 'postgres'),
+      database: isTest ? (process.env.DB_TEST_NAME ?? 'postgres_test') : (process.env.DB_NAME ?? 'postgres'),
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: isTest,
       extra: { connectionTimeoutMillis: 10000 },
     }),
     UsersModule,
     LocationsModule,
     AuthModule,
+    AdminModule,
   ],
 })
 export class AppModule {}
