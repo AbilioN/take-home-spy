@@ -44,6 +44,20 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Database migrations (TypeORM)
+
+Similar to Laravel’s `migration:fresh`:
+
+```bash
+# Drop all tables and re-run all migrations from scratch
+npm run migration:fresh
+
+# Run pending migrations only
+npm run migration:run
+```
+
+Requires DB env vars (e.g. `.env` or `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`, `DB_NAME`).
+
 ## Run tests
 
 ```bash

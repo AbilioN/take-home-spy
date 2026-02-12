@@ -16,12 +16,20 @@ exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
 const users_service_1 = require("./users.service");
 const locations_service_1 = require("../locations/locations.service");
+const register_user_dto_1 = require("./dto/register-user.dto");
+const login_user_dto_1 = require("./dto/login-user.dto");
 let UsersController = class UsersController {
     usersService;
     locationsService;
     constructor(usersService, locationsService) {
         this.usersService = usersService;
         this.locationsService = locationsService;
+    }
+    register(dto) {
+        return this.usersService.register(dto);
+    }
+    login(dto) {
+        return this.usersService.login(dto);
     }
     async getLastLocation(id) {
         await this.usersService.findById(id);
@@ -33,6 +41,20 @@ let UsersController = class UsersController {
     }
 };
 exports.UsersController = UsersController;
+__decorate([
+    (0, common_1.Post)('register'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [register_user_dto_1.RegisterUserDto]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "register", null);
+__decorate([
+    (0, common_1.Post)('login'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [login_user_dto_1.LoginUserDto]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "login", null);
 __decorate([
     (0, common_1.Get)(':id/last-location'),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),

@@ -1,6 +1,8 @@
-import { Controller, Get, Param, ParseUUIDPipe, Inject, forwardRef } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseUUIDPipe, Inject, forwardRef } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { LocationsService } from '../locations/locations.service';
+import { RegisterUserDto } from './dto/register-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -9,6 +11,16 @@ export class UsersController {
     @Inject(forwardRef(() => LocationsService))
     private readonly locationsService: LocationsService,
   ) {}
+
+  @Post('register')
+  register(@Body() dto: RegisterUserDto) {
+    return this.usersService.register(dto);
+  }
+
+  @Post('login')
+  login(@Body() dto: LoginUserDto) {
+    return this.usersService.login(dto);
+  }
 
   @Get(':id/last-location')
   async getLastLocation(@Param('id', ParseUUIDPipe) id: string) {

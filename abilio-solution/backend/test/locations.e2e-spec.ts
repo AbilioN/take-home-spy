@@ -34,10 +34,10 @@ describe('Locations & Users (e2e)', () => {
     await dataSource.getRepository(Location).createQueryBuilder().delete().execute();
     await dataSource.getRepository(User).createQueryBuilder().delete().execute();
 
-    const userRepo = dataSource.getRepository(User);
-    const user = userRepo.create({ email: 'e2e-user@test.com' });
-    const saved = await userRepo.save(user);
-    createdUserId = saved.id;
+    const registerRes = await request(app.getHttpServer())
+      .post('/users/register')
+      .send({ email: 'e2e-user@test.com', password: 'password123' });
+    createdUserId = registerRes.body.id;
   });
 
   afterAll(async () => {

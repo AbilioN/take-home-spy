@@ -15,6 +15,7 @@ const location_entity_1 = require("../../locations/entities/location.entity");
 let User = class User {
     id;
     email;
+    password;
     createdAt;
     locations;
 };
@@ -27,6 +28,10 @@ __decorate([
     (0, typeorm_1.Column)({ unique: true }),
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], User.prototype, "password", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)
