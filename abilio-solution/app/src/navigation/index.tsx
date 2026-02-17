@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LoginScreen } from '../screens/LoginScreen';
 import { RegisterScreen } from '../screens/RegisterScreen';
-import { CatHomeScreen } from '../screens/CatHomeScreen';
+import { CatTinderScreen } from '../screens/CatTinderScreen';
 import { LastLocationScreen } from '../screens/LastLocationScreen';
 
 export type RootStackParamList = {
@@ -27,7 +27,7 @@ export function AuthStack() {
 export function MainStack() {
   return (
     <Stack.Navigator screenOptions={noHeader}>
-      <Stack.Screen name="Home" component={CatHomeScreen} />
+      <Stack.Screen name="Home" component={CatTinderScreen} />
       <Stack.Screen name="LastLocation" component={LastLocationScreen} />
     </Stack.Navigator>
   );
