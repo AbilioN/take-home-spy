@@ -47,6 +47,10 @@ export function LoginScreen() {
     mutationFn: login,
     onSuccess: (data) => {
       setApiError(null);
+      if (!data?.userId) {
+        setApiError('Invalid response from server');
+        return;
+      }
       setUserId(data.userId);
     },
     onError: (err) => {

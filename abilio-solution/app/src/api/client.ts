@@ -6,18 +6,27 @@ export const apiClient = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
+function getErrorMessage(error: unknown): string {
+  if (error && typeof error === 'object' && 'isAxiosError' in error) {
+    const ax = error as { response?: { data?: unknown }; message?: string; code?: string };
+    if (ax.code === 'ERR_NETWORK' || ax.message === 'Network Error') {
+      return 'Cannot reach server. On a physical device, set EXPO_PUBLIC_API_URL to your computer’s IP (e.g. http://192.168.1.x:3000).';
+    }
+    const data = ax.response?.data;
+    if (data && typeof data === 'object' && Array.isArray((data as { message?: unknown }).message)) {
+      return ((data as { message: string[] }).message).join(', ') || 'Request failed';
+    }
+    const msg =
+      (data && typeof data === 'object' && (data as { message?: string }).message) ||
+      (typeof data === 'string' ? data : null) ||
+      ax.message ||
+      'Request failed';
+    return typeof msg === 'string' ? msg : 'Request failed';
+  }
+  return error instanceof Error ? error.message : 'Request failed';
+}
+
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Optional: clear session, redirect to login
-    }
-    const data = error.response?.data;
-    const message =
-      (typeof data === 'object' && data?.message) ||
-      (typeof data === 'string' ? data : null) ||
-      error.message ||
-      'Request failed';
-    return Promise.reject(new Error(message));
-  }
+  (error) => Promise.reject(new Error(getErrorMessage(error)))
 );
