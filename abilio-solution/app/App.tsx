@@ -1,43 +1,55 @@
-import 'react-native-gesture-handler';
-import { useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { NavigationContainer } from '@react-navigation/native';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthProvider, useAuth } from './src/contexts/AuthContext';
-import { AuthStack, MainStack } from './src/navigation';
-import { Loading } from './src/components/Loading';
-import { startBackgroundTracking, stopBackgroundTracking } from './src/services/backgroundLocationService';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 
-const queryClient = new QueryClient();
-
-function RootNavigator() {
-  const { userId, isLoading } = useAuth();
-  useEffect(() => {
-    if (userId) {
-      startBackgroundTracking();
-    } else {
-      stopBackgroundTracking();
-    }
-  }, [userId]);
-  if (isLoading) return <Loading />;
-  return userId ? <MainStack /> : <AuthStack />;
-}
+const DEBUG = true; // set false to disable debug logs
 
 export default function App() {
-  return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-    <SafeAreaProvider>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <NavigationContainer>
-            <RootNavigator />
-            <StatusBar style="auto" />
-          </NavigationContainer>
-        </AuthProvider>
-      </QueryClientProvider>
-    </SafeAreaProvider>
-    </GestureHandlerRootView>
-  );
+  const [Body, setBody] = useState<React.ComponentType | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  if (DEBUG) console.log('[App] render', { hasBody: !!Body, error });
+
+  useEffect(() => {
+    if (DEBUG) console.log('[App] useEffect: loading AppBody…');
+    import('./AppBody')
+      .then((m) => {
+        if (DEBUG) console.log('[App] AppBody loaded');
+        setBody(() => m.default);
+      })
+      .catch((e) => {
+        if (DEBUG) console.error('[App] AppBody load failed', e);
+        setError(String(e?.message ?? e));
+      });
+  }, []);
+
+  if (error) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.error}>Failed to load app</Text>
+        <Text style={styles.message}>{error}</Text>
+      </View>
+    );
+  }
+  if (!Body) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.label}>Starting…</Text>
+        <ActivityIndicator size="large" style={styles.spinner} />
+      </View>
+    );
+  }
+  return <Body />;
 }
+
+const styles = StyleSheet.create({
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  label: { fontSize: 18, marginBottom: 12 },
+  spinner: { marginTop: 8 },
+  error: { fontSize: 18, fontWeight: '600', color: '#c00', marginBottom: 8 },
+  message: { fontSize: 14, color: '#333', textAlign: 'center' },
+});

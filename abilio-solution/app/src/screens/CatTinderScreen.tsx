@@ -12,17 +12,20 @@ const CARD_HEIGHT = CARD_WIDTH * 1.2;
 const CARD_IMAGE_HEIGHT = Math.round(CARD_HEIGHT * 0.72);
 
 const QUERY_STALE_MS = 5 * 60 * 1000;
+const DEBUG = true;
 
 export function CatTinderScreen() {
   const { clearUserId } = useAuth();
   const [seed, setSeed] = useState(0);
 
+  if (DEBUG) console.log('[CatTinderScreen] render');
   const currentQuery = useQuery({
     queryKey: ['catProfile', seed],
     queryFn: fetchRandomCatProfile,
     staleTime: QUERY_STALE_MS,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
+    retry: 1,
   });
   useQuery({
     queryKey: ['catProfile', seed + 1],
@@ -50,9 +53,39 @@ export function CatTinderScreen() {
     setSeed((s) => s + 1);
   };
 
-  if (currentQuery.isLoading && !currentQuery.data) return <Loading />;
-  if (currentQuery.isError) return <ErrorMessage message={String(currentQuery.error)} />;
-  if (!cat) return <Loading />;
+  if (currentQuery.isLoading && !currentQuery.data) {
+    if (DEBUG) console.log('[CatTinderScreen] showing Loading (fetching cat)');
+    return <Loading />;
+  }
+  if (currentQuery.isError) {
+    if (DEBUG) console.log('[CatTinderScreen] showing Error', currentQuery.error?.message);
+    const msg = String(currentQuery.error?.message ?? currentQuery.error);
+    const isNetworkError = /network error|failed to fetch|timeout/i.test(msg);
+    const friendlyMessage = isNetworkError
+      ? 'Could not load cats. Check your internet connection and try again.'
+      : msg;
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Cat Spotter</Text>
+          <TouchableOpacity onPress={() => clearUserId()}>
+            <Text style={styles.logoutText}>Log out</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.errorContainer}>
+          <ErrorMessage message={friendlyMessage} />
+          <TouchableOpacity style={styles.retryButton} onPress={() => currentQuery.refetch()}>
+            <Text style={styles.retryButtonText}>Retry</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+  if (!cat) {
+    if (DEBUG) console.log('[CatTinderScreen] showing Loading (no cat yet)');
+    return <Loading />;
+  }
+  if (DEBUG) console.log('[CatTinderScreen] showing card for', cat.name);
 
   return (
     <View style={styles.container}>
@@ -110,6 +143,20 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 24, fontWeight: '600' },
   logoutText: { fontSize: 14, color: '#666' },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    gap: 16,
+  },
+  retryButton: {
+    paddingVertical: 14,
+    paddingHorizontal: 28,
+    backgroundColor: '#333',
+    borderRadius: 12,
+  },
+  retryButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
   cardContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20 },
   card: {
     width: CARD_WIDTH,

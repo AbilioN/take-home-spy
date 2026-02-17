@@ -52,11 +52,23 @@ export async function fetchCats(limit = 10): Promise<CatImage[]> {
   return data;
 }
 
+const DEBUG = true;
+const REQUEST_TIMEOUT_MS = 15_000;
+
 export async function fetchRandomCatProfile(): Promise<CatProfile> {
-  const { data } = await axios.get<CatImage[]>(`${CAT_API}/images/search`, {
-    params: { limit: 1 },
-    headers: CAT_API_KEY ? { 'x-api-key': CAT_API_KEY } : {},
-  });
-  if (!data?.[0]) throw new Error('No cat image');
-  return toProfile(data[0]);
+  if (DEBUG) console.log('[cats API] fetchRandomCatProfile start');
+  try {
+    const { data } = await axios.get<CatImage[]>(`${CAT_API}/images/search`, {
+      params: { limit: 1 },
+      headers: CAT_API_KEY ? { 'x-api-key': CAT_API_KEY } : {},
+      timeout: REQUEST_TIMEOUT_MS,
+    });
+    if (!data?.[0]) throw new Error('No cat image');
+    const profile = toProfile(data[0]);
+    if (DEBUG) console.log('[cats API] fetchRandomCatProfile success', profile.name);
+    return profile;
+  } catch (e) {
+    if (DEBUG) console.log('[cats API] fetchRandomCatProfile error', (e as Error)?.message ?? e);
+    throw e;
+  }
 }

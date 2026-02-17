@@ -1,8 +1,11 @@
 import * as TaskManager from 'expo-task-manager';
 import * as Location from 'expo-location';
+import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert, Platform } from 'react-native';
 import { postLocation } from '../api/locations';
+
+const isExpoGo = Constants.expoGoConfig != null;
 
 const LOCATION_TASK_NAME = 'background-location-task';
 const USER_ID_KEY = '@user_id';
@@ -29,6 +32,7 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
 });
 
 export async function startBackgroundTracking(): Promise<boolean> {
+  if (isExpoGo) return false;
   try {
     const { status: foregroundStatus } = await Location.requestForegroundPermissionsAsync();
     if (foregroundStatus !== 'granted') {
@@ -57,8 +61,9 @@ export async function startBackgroundTracking(): Promise<boolean> {
     };
     if (Platform.OS === 'android') {
       options.foregroundService = {
-        notificationTitle: 'Cat Spotter',
-        notificationBody: 'Sending your location to find cats nearby.',
+        notificationTitle: 'Cat Finder is active',
+        notificationBody: 'Tracking location to find cats nearby.',
+        killServiceOnDestroy: false,
       };
     }
     await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, options);

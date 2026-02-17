@@ -17,8 +17,8 @@
         "UIBackgroundModes": [
           "location"
         ],
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "We use your location to help you find cats nearby.",
-        "NSLocationWhenInUseUsageDescription": "We use your location to help you find cats nearby."
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "We use your location to help find cats nearby.",
+        "NSLocationWhenInUseUsageDescription": "We use your location to help find cats nearby."
       }
     },
     "android": {
@@ -26,7 +26,17 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "usesCleartextTraffic": true
+      "usesCleartextTraffic": true,
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "RECEIVE_BOOT_COMPLETED"
+      ],
+      "foregroundService": {
+        "notificationTitle": "Cat Finder is active",
+        "notificationBody": "Tracking location to find cats nearby."
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"

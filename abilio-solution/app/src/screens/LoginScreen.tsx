@@ -29,7 +29,9 @@ type FormData = z.infer<typeof schema>;
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
+const DEBUG = true;
 export function LoginScreen() {
+  if (DEBUG) console.log('[LoginScreen] render');
   const navigation = useNavigation<Nav>();
   const { setUserId } = useAuth();
   const [apiError, setApiError] = useState<string | null>(null);

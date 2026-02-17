@@ -39,3 +39,14 @@ npx expo start --tunnel
 ```
 
 Restart Expo after changing `.env`.
+
+## Background location
+
+Background location tracking **does not work in Expo Go** on Android and is limited on iOS (Simulator only). The app skips starting background tracking when running in Expo Go.
+
+To test background location on a physical device:
+
+1. Create a **development build**: `npx expo prebuild` then build with EAS or Android Studio / Xcode.
+2. Install and run that build on your device instead of Expo Go.
+
+See [Expo dev client](https://expo.fyi/dev-client) for details.

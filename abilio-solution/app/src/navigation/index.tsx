@@ -14,8 +14,10 @@ export type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const noHeader = { headerShown: false as const };
+const DEBUG = true;
 
 export function AuthStack() {
+  if (DEBUG) console.log('[AuthStack] render');
   return (
     <Stack.Navigator screenOptions={noHeader}>
       <Stack.Screen name="Login" component={LoginScreen} />
@@ -25,6 +27,7 @@ export function AuthStack() {
 }
 
 export function MainStack() {
+  if (DEBUG) console.log('[MainStack] render');
   return (
     <Stack.Navigator screenOptions={noHeader}>
       <Stack.Screen name="Home" component={CatTinderScreen} />
