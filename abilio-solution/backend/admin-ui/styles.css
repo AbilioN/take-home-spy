@@ -1,0 +1,155 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #1a1a2e;
+  color: #eee;
+  min-height: 100vh;
+}
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 320px;
+  padding: 1.5rem;
+  background: #16213e;
+  border-right: 1px solid #0f3460;
+}
+
+.sidebar h1 {
+  margin: 0 0 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.panel h2 {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #a0aec0;
+}
+
+.panel.hidden {
+  display: none;
+}
+
+#login-form input,
+#login-form button {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #0f3460;
+  border-radius: 8px;
+  background: #1a1a2e;
+  color: #eee;
+  font-size: 0.9rem;
+}
+
+#login-form button {
+  margin-top: 0.5rem;
+  background: #e94560;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+#login-form button:hover {
+  background: #ff6b6b;
+}
+
+.error {
+  color: #fc8181;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+#logout-btn {
+  padding: 0.4rem 0.75rem;
+  margin-bottom: 1rem;
+  background: transparent;
+  border: 1px solid #0f3460;
+  border-radius: 6px;
+  color: #a0aec0;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+#logout-btn:hover {
+  color: #eee;
+  border-color: #e94560;
+}
+
+#user-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#user-list li {
+  padding: 0.65rem 0.75rem;
+  margin-bottom: 0.25rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  border: 1px solid transparent;
+}
+
+#user-list li:hover {
+  background: #1a1a2e;
+}
+
+#user-list li.selected {
+  background: #0f3460;
+  border-color: #e94560;
+}
+
+#user-list .email {
+  font-weight: 500;
+}
+
+#user-list .meta {
+  font-size: 0.75rem;
+  color: #718096;
+  margin-top: 0.2rem;
+}
+
+.main {
+  flex: 1;
+  position: relative;
+}
+
+.map-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1a2e;
+  color: #718096;
+}
+
+.map-placeholder.hidden {
+  display: none;
+}
+
+.map-container {
+  position: absolute;
+  inset: 0;
+}
+
+.map-container.hidden {
+  display: none;
+}
+
+#map-container .leaflet-container {
+  background: #1a1a2e;
+  height: 100%;
+  width: 100%;
+}

@@ -29,23 +29,8 @@ export class AdminController {
 
   @Get('users')
   @UseGuards(AdminTokenGuard)
-  async getUsers() {
-    const users = await this.usersService.findAll();
-    const list = await Promise.all(
-      users.map(async (u) => {
-        const lastLocation = await this.locationsService.findLastByUserId(u.id);
-        const totalLocations = await this.locationsService.countByUserId(u.id);
-        return {
-          id: u.id,
-          email: u.email,
-          lastLocation: lastLocation
-            ? { latitude: lastLocation.latitude, longitude: lastLocation.longitude, createdAt: lastLocation.createdAt }
-            : null,
-          totalLocations,
-        };
-      }),
-    );
-    return list;
+  getUsers() {
+    return this.adminService.getUsersWithStats();
   }
 
   @Get('users/:id/trajectory')

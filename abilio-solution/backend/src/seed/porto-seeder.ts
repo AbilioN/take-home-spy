@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { User } from '../users/entities/user.entity';
 import { Location } from '../locations/entities/location.entity';
 import { TrackingSettings } from '../tracking-settings/entities/tracking-settings.entity';
+import { Admin } from '../admin/entities/admin.entity';
 
 const SALT_ROUNDS = 10;
 
@@ -63,7 +64,7 @@ async function run() {
     username: process.env.DB_USER ?? 'postgres',
     password: process.env.DB_PASS ?? 'postgres',
     database: process.env.DB_NAME ?? 'postgres',
-    entities: [User, Location, TrackingSettings],
+    entities: [User, Location, TrackingSettings, Admin],
     synchronize: false,
   });
 
@@ -72,6 +73,17 @@ async function run() {
   const userRepo = ds.getRepository(User);
   const locationRepo = ds.getRepository(Location);
   const settingsRepo = ds.getRepository(TrackingSettings);
+  const adminRepo = ds.getRepository(Admin);
+
+  const existingAdmin = await adminRepo.find({ where: { email: 'admin@example.com' }, take: 1 });
+  if (existingAdmin.length === 0) {
+    const admin = adminRepo.create({
+      email: 'admin@example.com',
+      password: await bcrypt.hash('admin123', SALT_ROUNDS),
+    });
+    await adminRepo.save(admin);
+    console.log('Admin created: admin@example.com / admin123');
+  }
 
   const existing = await userRepo.findOne({ where: { email: 'porto@test.com' } });
   if (existing) {
@@ -112,7 +124,7 @@ async function run() {
   }
 
   await ds.destroy();
-  console.log('Porto seeder done: porto@test.com user, 40 locations, TrackingSettings 50m');
+  console.log('Porto seeder done: porto@test.com user, 40 locations, TrackingSettings 50m. Admin: admin@example.com / admin123');
 }
 
 run().catch((e) => {

@@ -31,6 +31,23 @@
 $ npm install
 ```
 
+Copy `.env.example` to `.env` and set your PostgreSQL credentials.
+
+## Quick start
+
+```bash
+npm install
+cp .env.example .env
+# Edit .env with your DB_HOST, DB_USER, DB_PASS, DB_NAME
+npm run migration:run   # or migration:fresh to reset
+npm run seed            # optional: porto@test.com user + 40 locations + TrackingSettings 50m
+npm run start:dev
+```
+
+- **App users (React Native):** `POST /users/register`, `POST /users/login`, `POST /locations`, `GET /users/:id/last-location`, `GET /users/:id/history`
+- **Admin:** `POST /admin/login` (returns `token`), then use header `x-admin-token: <token>` for `PUT /admin/settings`, `GET /admin/users`, `GET /admin/users/:id/trajectory`, `GET /admin/users/:id/trajectory/geojson`
+- **Admin UI (map + user list):** After starting the server, open **http://localhost:3000/dashboard** (or your `PORT`). Login with `admin@example.com` / `admin123` (after running `npm run seed`). Select a user to see their location history on the map.
+
 ## Compile and run the project
 
 ```bash
@@ -57,6 +74,14 @@ npm run migration:run
 ```
 
 Requires DB env vars (e.g. `.env` or `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`, `DB_NAME`).
+
+## Seed data
+
+```bash
+npm run seed
+```
+
+Creates admin `admin@example.com` / `admin123`, user `porto@test.com` / `123456`, ~40 locations (Porto trajectory), and default TrackingSettings (minimumDistanceMeters: 50). Use the admin to log into the dashboard at `/dashboard`.
 
 ## Run tests
 
