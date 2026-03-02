@@ -27,6 +27,23 @@ function getErrorMessage(error: unknown): string {
 }
 
 apiClient.interceptors.response.use(
-  (response) => response,
-  (error) => Promise.reject(new Error(getErrorMessage(error)))
+  (response) => {
+    if (__DEV__ && response.config.url) {
+      console.log('[apiClient]', response.config.method?.toUpperCase(), response.config.url, response.status);
+    }
+    return response;
+  },
+  (error) => {
+    if (__DEV__ && error?.config) {
+      console.warn('[apiClient] failed', {
+        url: error.config?.url,
+        method: error.config?.method,
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message,
+        code: error.code,
+      });
+    }
+    return Promise.reject(new Error(getErrorMessage(error)));
+  }
 );

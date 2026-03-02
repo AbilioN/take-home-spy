@@ -1,6 +1,5 @@
 import 'react-native-gesture-handler';
 import { useEffect, useRef } from 'react';
-import Constants from 'expo-constants';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -10,6 +9,7 @@ import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 import { AuthStack, MainStack } from './src/navigation';
 import { Loading } from './src/components/Loading';
 import { ErrorBoundary } from './src/components/ErrorBoundary';
+import { startBackgroundTracking, stopBackgroundTracking } from './src/services/backgroundLocationService';
 
 const queryClient = new QueryClient();
 const DEBUG = true;
@@ -19,15 +19,14 @@ function RootNavigator() {
   const trackingStarted = useRef(false);
   if (DEBUG) console.log('[RootNavigator] render', { userId: !!userId, isLoading });
   useEffect(() => {
-    if (Constants.expoGoConfig != null) return;
     if (!userId) {
       trackingStarted.current = false;
-      import('./src/services/backgroundLocationService').then((m) => m.stopBackgroundTracking());
+      stopBackgroundTracking();
       return;
     }
     if (trackingStarted.current) return;
     trackingStarted.current = true;
-    import('./src/services/backgroundLocationService').then((m) => m.startBackgroundTracking());
+    startBackgroundTracking();
   }, [userId]);
   if (isLoading) return <Loading />;
   const showingMain = !!userId;
