@@ -20,6 +20,10 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
+  async findAll(): Promise<User[]> {
+    return this.userRepository.find({ order: { createdAt: 'DESC' } });
+  }
+
   async findById(id: string): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {

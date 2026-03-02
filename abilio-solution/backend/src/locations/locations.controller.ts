@@ -7,7 +7,9 @@ export class LocationsController {
   constructor(private readonly locationsService: LocationsService) {}
 
   @Post()
-  create(@Body() dto: CreateLocationDto) {
-    return this.locationsService.create(dto);
+  async create(@Body() dto: CreateLocationDto) {
+    const result = await this.locationsService.create(dto);
+    if (result.saved) return { saved: true };
+    return { saved: false, reason: result.reason };
   }
 }

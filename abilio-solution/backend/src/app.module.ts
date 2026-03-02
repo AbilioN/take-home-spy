@@ -5,6 +5,7 @@ import { UsersModule } from './users/users.module';
 import { LocationsModule } from './locations/locations.module';
 import { AuthModule } from './auth/auth.module';
 import { AdminModule } from './admin/admin.module';
+import { TrackingSettingsModule } from './tracking-settings/tracking-settings.module';
 
 const isTest = process.env.NODE_ENV === 'test';
 
@@ -28,6 +29,7 @@ const isTest = process.env.NODE_ENV === 'test';
     UsersModule,
     LocationsModule,
     AuthModule,
+    TrackingSettingsModule,
     AdminModule,
   ],
 })

@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Admin } from './entities/admin.entity';
 import { LoginAdminDto } from './dto/login-admin.dto';
+import { AdminAuthService } from './admin-auth.service';
 
 const SALT_ROUNDS = 10;
 
@@ -12,17 +13,14 @@ export class AdminService {
   constructor(
     @InjectRepository(Admin)
     private readonly adminRepository: Repository<Admin>,
+    private readonly adminAuthService: AdminAuthService,
   ) {}
-
-  async hashPassword(plain: string): Promise<string> {
-    return bcrypt.hash(plain, SALT_ROUNDS);
-  }
 
   async validatePassword(plain: string, hashed: string): Promise<boolean> {
     return bcrypt.compare(plain, hashed);
   }
 
-  async login(dto: LoginAdminDto): Promise<{ success: true }> {
+  async login(dto: LoginAdminDto): Promise<{ success: true; token: string }> {
     const admin = await this.adminRepository.findOne({
       where: { email: dto.email },
     });
@@ -33,7 +31,8 @@ export class AdminService {
     if (!valid) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    return { success: true };
+    const token = this.adminAuthService.generateToken();
+    return { success: true, token };
   }
 
   async findByEmail(email: string): Promise<Admin | null> {
