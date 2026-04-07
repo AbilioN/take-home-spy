@@ -31,7 +31,7 @@ export class AdminService {
     return bcrypt.compare(plain, hashed);
   }
 
-  async login(dto: LoginAdminDto): Promise<{ success: true; token: string }> {
+  async login(dto: LoginAdminDto): Promise<{ success: true; token: string; accessToken: string }> {
     const admin = await this.adminRepository.findOne({
       where: { email: dto.email },
     });
@@ -43,7 +43,7 @@ export class AdminService {
       throw new UnauthorizedException('Invalid credentials');
     }
     const token = this.adminAuthService.generateToken();
-    return { success: true, token };
+    return { success: true, token, accessToken: token };
   }
 
   async getUsersWithStats(): Promise<UserWithStats[]> {

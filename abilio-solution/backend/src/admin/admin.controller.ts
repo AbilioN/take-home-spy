@@ -1,4 +1,5 @@
-import { Controller, Post, Body, Get, Put, Param, UseGuards, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Post, Body, Get, Put, Param, UseGuards, ParseUUIDPipe, Res } from '@nestjs/common';
+import type { Response } from 'express';
 import { AdminService } from './admin.service';
 import { LoginAdminDto } from './dto/login-admin.dto';
 import { UpdateSettingsDto } from '../tracking-settings/dto/update-settings.dto';
@@ -17,8 +18,10 @@ export class AdminController {
   ) {}
 
   @Post('login')
-  login(@Body() dto: LoginAdminDto) {
-    return this.adminService.login(dto);
+  async login(@Body() dto: LoginAdminDto, @Res({ passthrough: true }) res: Response) {
+    const result = await this.adminService.login(dto);
+    res.setHeader('x-admin-token', result.token);
+    return result;
   }
 
   @Put('settings')

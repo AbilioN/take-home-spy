@@ -17,8 +17,8 @@ services:
 
   backend:
     build:
-      context: ./abilio-solution/backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: abilio-solution/backend/Dockerfile
     restart: unless-stopped
     ports:
       - "${PORT:-3000}:3000"
@@ -29,6 +29,7 @@ services:
       DB_PASS: ${DB_PASS:-postgres}
       DB_NAME: ${DB_NAME:-abilio}
       PORT: 3000
+      RUN_SEED: "true"
     depends_on:
       postgres:
         condition: service_healthy

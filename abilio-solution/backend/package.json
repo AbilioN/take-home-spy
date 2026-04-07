@@ -20,7 +20,10 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migration:run": "ts-node -r tsconfig-paths/register -r dotenv/config node_modules/typeorm/cli.js migration:run -d src/data-source.ts",
     "migration:fresh": "ts-node -r tsconfig-paths/register -r dotenv/config scripts/migration-fresh.ts",
-    "seed": "ts-node -r tsconfig-paths/register -r dotenv/config src/seed/porto-seeder.ts"
+    "seed": "ts-node -r tsconfig-paths/register -r dotenv/config src/seed/porto-seeder.ts",
+    "seed:porto": "ts-node -r tsconfig-paths/register -r dotenv/config src/seed/porto-seeder.ts",
+    "seed:lisboa": "ts-node -r tsconfig-paths/register -r dotenv/config src/seed/lisboa-seeder.ts",
+    "seed:all": "npm run seed:porto && npm run seed:lisboa"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

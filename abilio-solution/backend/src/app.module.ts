@@ -13,10 +13,6 @@ const isTest = process.env.NODE_ENV === 'test';
 
 @Module({
   imports: [
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'admin-ui'),
-      serveRoot: '/dashboard',
-    }),
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -37,6 +33,10 @@ const isTest = process.env.NODE_ENV === 'test';
     AuthModule,
     TrackingSettingsModule,
     AdminModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'admin-ui'),
+      serveRoot: '/dashboard',
+    }),
   ],
 })
 export class AppModule {}

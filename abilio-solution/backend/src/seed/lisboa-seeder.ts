@@ -8,64 +8,65 @@ import { Admin } from '../admin/entities/admin.entity';
 
 const SALT_ROUNDS = 10;
 
-// A more realistic Porto trajectory (continuous path):
-// Ribeira → Sé → São Bento → Aliados → Trindade → Boavista → Casa da Música → Foz.
-const PORTO_WAYPOINTS: [number, number][] = [
-  // Ribeira (Cais da Ribeira)
-  [41.1406, -8.6110],
-  [41.1411, -8.6102],
-  [41.1417, -8.6094],
-  [41.1423, -8.6087],
+// A continuous Lisbon trajectory:
+// Cais do Sodré → Chiado → Baixa/Rossio → Av. da Liberdade → Marquês → Saldanha → Alameda → Oriente.
+const LISBOA_WAYPOINTS: [number, number][] = [
+  // Cais do Sodré / Ribeira das Naus
+  [38.7067, -9.1450],
+  [38.7072, -9.1440],
+  [38.7078, -9.1430],
+  [38.7085, -9.1421],
 
-  // Up towards Sé / Batalha
-  [41.1429, -8.6079],
-  [41.1435, -8.6072],
-  [41.1441, -8.6066],
-  [41.1448, -8.6062], // Sé do Porto area
+  // Chiado
+  [38.7093, -9.1413],
+  [38.7101, -9.1406],
+  [38.7108, -9.1400],
+  [38.7115, -9.1394],
 
-  // São Bento / Praça da Liberdade
-  [41.1454, -8.6076], // São Bento
-  [41.1461, -8.6087],
-  [41.1467, -8.6096], // Praça da Liberdade
+  // Baixa / Rossio
+  [38.7122, -9.1390],
+  [38.7130, -9.1386], // Rossio
+  [38.7137, -9.1383],
+  [38.7145, -9.1381],
 
-  // Aliados → Trindade
-  [41.1473, -8.6107], // Av. dos Aliados
-  [41.1479, -8.6117],
-  [41.1485, -8.6127],
-  [41.1491, -8.6136], // Trindade
+  // Av. da Liberdade up north
+  [38.7152, -9.1380],
+  [38.7162, -9.1379],
+  [38.7172, -9.1377],
+  [38.7182, -9.1375],
+  [38.7192, -9.1372],
+  [38.7202, -9.1369],
 
-  // Cedofeita / Bom Sucesso direction
-  [41.1492, -8.6148],
-  [41.1491, -8.6162],
-  [41.1490, -8.6176],
-  [41.1488, -8.6190],
-  [41.1486, -8.6204],
+  // Marquês de Pombal / Parque Eduardo VII edge
+  [38.7214, -9.1365], // Marquês
+  [38.7224, -9.1360],
+  [38.7235, -9.1353],
 
-  // Rotunda da Boavista / Casa da Música
-  [41.1484, -8.6218],
-  [41.1483, -8.6232],
-  [41.1482, -8.6246],
-  [41.1490, -8.6259], // Rotunda da Boavista vicinity
-  [41.1501, -8.6276],
-  [41.1512, -8.6292],
-  [41.1521, -8.6308],
-  [41.1530, -8.6325],
-  [41.1540, -8.6341],
-  [41.1549, -8.6357],
-  [41.1559, -8.6372],
-  [41.1569, -8.6384], // Casa da Música
+  // Saldanha
+  [38.7246, -9.1345],
+  [38.7256, -9.1336], // Saldanha
+  [38.7265, -9.1326],
+  [38.7274, -9.1316],
 
-  // Down to Foz (towards the river mouth / coast)
-  [41.1564, -8.6405],
-  [41.1556, -8.6427],
-  [41.1546, -8.6450],
-  [41.1534, -8.6474],
-  [41.1521, -8.6497],
-  [41.1507, -8.6517],
-  [41.1492, -8.6535],
-  [41.1477, -8.6552],
-  [41.1462, -8.6568],
-  [41.1448, -8.6582], // Foz / Cantareira area
+  // Alameda
+  [38.7283, -9.1305],
+  [38.7292, -9.1294],
+  [38.7300, -9.1282],
+  [38.7309, -9.1270], // Alameda
+
+  // Areeiro / Olaias direction
+  [38.7317, -9.1256],
+  [38.7325, -9.1241],
+  [38.7334, -9.1226],
+  [38.7342, -9.1211],
+
+  // Oriente / Parque das Nações
+  [38.7350, -9.1193],
+  [38.7359, -9.1176],
+  [38.7368, -9.1158],
+  [38.7377, -9.1141],
+  [38.7386, -9.1124],
+  [38.7395, -9.1108], // Gare do Oriente vicinity
 ];
 
 function jitter(coord: number, meters: number): number {
@@ -102,7 +103,7 @@ async function run() {
     console.log('Admin created: admin@example.com / admin123');
   }
 
-  const existing = await userRepo.findOne({ where: { email: 'porto@test.com' } });
+  const existing = await userRepo.findOne({ where: { email: 'lisboa@test.com' } });
   if (existing) {
     await locationRepo.delete({ userId: existing.id });
     await userRepo.remove(existing);
@@ -110,17 +111,17 @@ async function run() {
 
   const hashed = await bcrypt.hash('123456', SALT_ROUNDS);
   const user = userRepo.create({
-    email: 'porto@test.com',
+    email: 'lisboa@test.com',
     password: hashed,
   });
   const savedUser = await userRepo.save(user);
 
   const twoHoursMs = 2 * 60 * 60 * 1000;
-  const intervalMs = twoHoursMs / (PORTO_WAYPOINTS.length - 1);
+  const intervalMs = twoHoursMs / (LISBOA_WAYPOINTS.length - 1);
   const startTime = Date.now() - twoHoursMs;
 
-  for (let i = 0; i < PORTO_WAYPOINTS.length; i++) {
-    const [lat, lon] = PORTO_WAYPOINTS[i];
+  for (let i = 0; i < LISBOA_WAYPOINTS.length; i++) {
+    const [lat, lon] = LISBOA_WAYPOINTS[i];
     const location = locationRepo.create({
       userId: savedUser.id,
       latitude: jitter(lat, 15),
@@ -141,10 +142,13 @@ async function run() {
   }
 
   await ds.destroy();
-  console.log('Porto seeder done: porto@test.com user, 40 locations, TrackingSettings 50m. Admin: admin@example.com / admin123');
+  console.log(
+    'Lisboa seeder done: lisboa@test.com user, trajectory locations, TrackingSettings 50m. Admin: admin@example.com / admin123',
+  );
 }
 
 run().catch((e) => {
   console.error(e);
   process.exit(1);
 });
+

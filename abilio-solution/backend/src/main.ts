@@ -11,7 +11,9 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  app.enableCors();
+  app.enableCors({
+    exposedHeaders: ['x-admin-token'],
+  });
   const port = process.env.PORT ?? 3000;
   await app.listen(port, '0.0.0.0');
 }

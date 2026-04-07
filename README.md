@@ -53,3 +53,9 @@ We live in the future, and we expect you to use the tools available. **The use o
 5.  Submit your work via a **Pull Request** to the `main` branch of this repo.
 
 **Good luck, Agent. We'll be watching.**
+
+---
+
+## Implementation in this fork
+
+See **[PROJECT.md](./PROJECT.md)** for architecture, ports, Docker, and how to run the admin static server on a separate Node port after `npm run build`.
